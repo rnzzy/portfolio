@@ -7,17 +7,15 @@
   --status-completed: #00cc66;
   --status-progress: #ffbb00;
 
-  /* Animation progress 0..1 (set by JS) */
+  /* scroll progress 0..1 (set by JS) */
   --p: 0;
 
-  /* Header smallest height */
+  /* header sizes */
   --header-min: 80px;
-
-  /* must match JS SHRINK_DISTANCE */
-  --shrink-distance: 260px;
+  --header-max: 100dvh; /* better than 100vh on many browsers [web:65] */
 }
 
-/* --- GLOBAL RESETS --- */
+/* resets */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
@@ -26,18 +24,18 @@ body {
   font-family: 'Inter', sans-serif;
   overflow-x: hidden;
 
-  /* KEY FIX: instead of a huge spacer div, offset content by current header height */
+  /* IMPORTANT: offset content by current header height (no spacer div needed) */
   padding-top: clamp(
     var(--header-min),
-    calc(100vh - (100vh - var(--header-min)) * var(--p)),
-    100vh
+    calc(var(--header-max) - (var(--header-max) - var(--header-min)) * var(--p)),
+    var(--header-max)
   );
 }
 
-/* Optional: if you add anchor links later, this prevents sections hiding under the fixed header. */
-html { scroll-padding-top: 90px; } /* common sticky-header fix [web:2] */
+/* Optional: helps anchor jumps with fixed headers [web:43] */
+html { scroll-padding-top: 90px; }
 
-.console-text, .date, .tech-stack, .badge-sudo, .comment, .hash {
+.console-text, .date, .tech-stack, .comment, .hash {
   font-family: 'Fira Code', monospace;
 }
 
@@ -46,19 +44,22 @@ section { margin-bottom: 6rem; }
 h2 { font-size: 2rem; margin-bottom: 2rem; color: var(--accent); }
 h3 { margin-bottom: 1rem; }
 
-/* --- HEADER --- */
+/* HEADER */
 #hero-header {
   position: fixed;
   top: 0; left: 0;
   width: 100%;
   z-index: 1000;
 
-  background: rgba(10,10,10, calc(0 + (0.95 * var(--p))));
+  background: rgba(10,10,10, calc(0.15 + (0.80 * var(--p))));
   backdrop-filter: blur(calc(10px * var(--p)));
   border-bottom: 1px solid rgba(51,51,51, var(--p));
 
-  /* Height goes from 100vh to 80px */
-  height: clamp(var(--header-min), calc(100vh - (100vh - var(--header-min)) * var(--p)), 100vh);
+  height: clamp(
+    var(--header-min),
+    calc(var(--header-max) - (var(--header-max) - var(--header-min)) * var(--p)),
+    var(--header-max)
+  );
 
   display: flex;
   align-items: center;
@@ -77,7 +78,6 @@ h3 { margin-bottom: 1rem; }
   justify-content: center;
 }
 
-/* Disappearing block */
 .disappearing-content {
   text-align: center;
   opacity: calc(1 - var(--p));
@@ -88,7 +88,6 @@ h3 { margin-bottom: 1rem; }
 .console-text { color: var(--accent); font-size: 1.2rem; margin-bottom: 0.5rem; }
 .comment { color: var(--text-secondary); font-size: 0.9rem; }
 
-/* Identity */
 .identity-wrapper { text-align: center; }
 
 .name {
@@ -106,7 +105,7 @@ h3 { margin-bottom: 1rem; }
   overflow: hidden;
 }
 
-/* Buttons */
+/* buttons */
 .cta-wrapper { display: flex; gap: 1rem; }
 
 .btn {
@@ -122,15 +121,16 @@ h3 { margin-bottom: 1rem; }
 .btn.secondary { color: var(--text-primary); border-color: var(--text-secondary); }
 .btn:hover { transform: translateY(-3px); }
 
-/* Desktop layout: show bar style */
+/* Desktop: bar layout (NO extra push-down padding, no transforms) */
 @media (min-width: 700px) {
   #hero-header .header-content {
     flex-direction: row;
     justify-content: space-between;
   }
+  .identity-wrapper { text-align: left; }
 }
 
-/* --- CONTENT --- */
+/* CONTENT */
 .content-container {
   max-width: 1000px;
   margin: 0 auto;
@@ -141,6 +141,7 @@ h3 { margin-bottom: 1rem; }
   min-height: 100vh;
 }
 
+/* About */
 .about-grid {
   display: grid;
   grid-template-columns: 300px 1fr;
@@ -149,10 +150,7 @@ h3 { margin-bottom: 1rem; }
   margin-top: 2rem;
 }
 
-.image-wrapper {
-  width: 100%;
-  max-width: 300px;
-}
+.image-wrapper { width: 100%; max-width: 300px; }
 
 .profile-pic {
   width: 100%;
@@ -170,6 +168,7 @@ h3 { margin-bottom: 1rem; }
   font-size: 0.9rem;
 }
 
+/* Grids */
 .grid-2-col { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
 .project-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
 
@@ -193,11 +192,13 @@ h3 { margin-bottom: 1rem; }
   border-radius: 4px;
 }
 
+/* Cert badges */
 .cert-item { margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid #222; }
 .status { font-size: 0.7rem; text-transform: uppercase; font-weight: bold; padding: 2px 6px; border-radius: 3px; margin-right: 8px; }
 .status.completed { background: rgba(0, 204, 102, 0.2); color: var(--status-completed); }
 .status.in-progress { background: rgba(255, 187, 0, 0.2); color: var(--status-progress); }
 
+/* Footer */
 footer {
   text-align: center;
   padding: 3rem 0;
@@ -206,7 +207,6 @@ footer {
   font-size: 0.9rem;
   margin-top: 4rem;
 }
-
 #back-to-top {
   background: none;
   border: 1px solid var(--text-secondary);

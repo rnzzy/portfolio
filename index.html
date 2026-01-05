@@ -36,8 +36,6 @@
     </div>
   </header>
 
-  <!-- REMOVED: <div class="scroll-spacer"></div> -->
-
   <main class="content-container">
     <section id="about" class="fade-in">
       <div class="about-grid">
@@ -51,7 +49,11 @@
 
         <div class="about-text">
           <h2><span class="hash">#</span> About_Me</h2>
-          <p>I am a tech enthusiast focused on network engineering and full-stack development. I enjoy solving complex problems, building secure systems, and designing efficient networks. Whether it's configuring routers or building web apps like SecUmak, I am always ready to learn and deploy.</p>
+          <p>
+            I am a tech enthusiast focused on network engineering and full-stack development.
+            I enjoy solving complex problems, building secure systems, and designing efficient networks.
+            Whether it's configuring routers or building web apps like SecUmak, I am always ready to learn and deploy.
+          </p>
         </div>
       </div>
     </section>
@@ -119,7 +121,9 @@
 
   <footer>
     <p>&copy; 2026 Jhorenz Samson Camarador. Built with <i class="fa-solid fa-code"></i>.</p>
-    <button id="back-to-top" onclick="scrollToTop()">Back to Top <i class="fa-solid fa-arrow-up"></i></button>
+    <button id="back-to-top" onclick="window.scrollTo({ top: 0, behavior: 'smooth' })">
+      Back to Top <i class="fa-solid fa-arrow-up"></i>
+    </button>
   </footer>
 
   <script src="script.js"></script>
