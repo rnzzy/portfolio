@@ -10,8 +10,11 @@
   /* Animation progress 0..1 (set by JS) */
   --p: 0;
 
-  /* Endpoints */
+  /* Header smallest height */
   --header-min: 80px;
+
+  /* must match JS SHRINK_DISTANCE */
+  --shrink-distance: 260px;
 }
 
 /* --- GLOBAL RESETS --- */
@@ -20,32 +23,43 @@
 body {
   background-color: var(--bg-color);
   color: var(--text-primary);
-  font-family: 'Inter', sans-serif; /* Ensures the font isn't Times New Roman */
+  font-family: 'Inter', sans-serif;
   overflow-x: hidden;
+
+  /* KEY FIX: instead of a huge spacer div, offset content by current header height */
+  padding-top: clamp(
+    var(--header-min),
+    calc(100vh - (100vh - var(--header-min)) * var(--p)),
+    100vh
+  );
 }
 
-/* Typography Utils */
+/* Optional: if you add anchor links later, this prevents sections hiding under the fixed header. */
+html { scroll-padding-top: 90px; } /* common sticky-header fix [web:2] */
+
 .console-text, .date, .tech-stack, .badge-sudo, .comment, .hash {
-    font-family: 'Fira Code', monospace;
+  font-family: 'Fira Code', monospace;
 }
+
 a { text-decoration: none; color: inherit; }
 section { margin-bottom: 6rem; }
 h2 { font-size: 2rem; margin-bottom: 2rem; color: var(--accent); }
 h3 { margin-bottom: 1rem; }
 
-/* =========================================
-   YOUR HEADER CODE (PRESERVED & INTEGRATED)
-   ========================================= */
+/* --- HEADER --- */
 #hero-header {
   position: fixed;
   top: 0; left: 0;
   width: 100%;
   z-index: 1000;
+
   background: rgba(10,10,10, calc(0 + (0.95 * var(--p))));
   backdrop-filter: blur(calc(10px * var(--p)));
   border-bottom: 1px solid rgba(51,51,51, var(--p));
+
   /* Height goes from 100vh to 80px */
   height: clamp(var(--header-min), calc(100vh - (100vh - var(--header-min)) * var(--p)), 100vh);
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -55,9 +69,10 @@ h3 { margin-bottom: 1rem; }
   width: 100%;
   max-width: 1200px;
   padding: 0 2rem;
+
   display: flex;
   align-items: center;
-  flex-direction: column; /* Starts as column */
+  flex-direction: column;
   gap: 1.5rem;
   justify-content: center;
 }
@@ -66,46 +81,40 @@ h3 { margin-bottom: 1rem; }
 .disappearing-content {
   text-align: center;
   opacity: calc(1 - var(--p));
-  max-height: calc(100px * (1 - var(--p)));
+  max-height: calc(120px * (1 - var(--p)));
   overflow: hidden;
-  transition: none;
 }
+
 .console-text { color: var(--accent); font-size: 1.2rem; margin-bottom: 0.5rem; }
 .comment { color: var(--text-secondary); font-size: 0.9rem; }
 
-/* Name Wrapper */
+/* Identity */
 .identity-wrapper { text-align: center; }
 
 .name {
   font-weight: 800;
   white-space: nowrap;
-  /* Shrinks from 3.5rem to 1.5rem */
   font-size: calc(3.5rem - (3.5rem - 1.5rem) * var(--p));
-  transition: none;
   line-height: 1.2;
 }
 
-/* Tagline */
 .tagline {
   color: var(--text-secondary);
   margin-top: 0.5rem;
   opacity: calc(1 - var(--p));
-  max-height: calc(50px * (1 - var(--p)));
+  max-height: calc(60px * (1 - var(--p)));
   overflow: hidden;
-  transition: none;
 }
 
 /* Buttons */
 .cta-wrapper { display: flex; gap: 1rem; }
 
 .btn {
-  /* Dynamic padding calculation */
   padding: calc(12px - 4px * var(--p)) calc(24px - 8px * var(--p));
   border-radius: 6px;
   font-weight: 600;
   color: #fff;
   border: 1px solid #333;
-  /* Dynamic font size */
   font-size: calc(1rem - 0.1rem * var(--p));
   transition: transform 0.3s, background-color 0.3s;
 }
@@ -113,129 +122,104 @@ h3 { margin-bottom: 1rem; }
 .btn.secondary { color: var(--text-primary); border-color: var(--text-secondary); }
 .btn:hover { transform: translateY(-3px); }
 
-/* Landscape / Desktop Logic */
+/* Desktop layout: show bar style */
 @media (min-width: 700px) {
-  #hero-header { justify-content: center; }
-  /* Blend layout: closer to row as P increases */
   #hero-header .header-content {
-     /* We use a calc to simulate the switch or keep flex-direction column until p=1 */
-     /* For simplicity in your specific case, we rely on the header-content width */
-     flex-direction: row; 
-     justify-content: space-between;
-  }
-  
-  /* Correction: In full screen mode (p=0), we want centered column. 
-     In scrolled mode (p=1), we want row. 
-     CSS can't animate flex-direction, so we stick to Flex Row but use margins to center items initially */
-     
-  .header-content {
-      flex-direction: row;
-      justify-content: space-between;
-      padding-top: calc((1 - var(--p)) * 20vh); /* Push down when big */
-  }
-  
-  /* Force items to center visually when p=0 */
-  .identity-wrapper {
-      transform: translateX(calc((1 - var(--p)) * 15vw)); /* Move Center */
-      text-align: left;
-  }
-  .cta-wrapper {
-      transform: translateY(calc((1 - var(--p)) * 50px));
+    flex-direction: row;
+    justify-content: space-between;
   }
 }
 
-/* =========================================
-   CONTENT FIXES (ABOUT, PROJECTS, ETC)
-   ========================================= */
-
-/* 1. SPACER 
-   Since the header is fixed, we need a huge empty space at the top 
-   so the user can scroll "through" the animation. */
-.scroll-spacer {
-    height: 100vh;
-    width: 100%;
-    pointer-events: none;
-}
-
-/* 2. CONTAINER */
+/* --- CONTENT --- */
 .content-container {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 2rem;
-    position: relative;
-    z-index: 10; /* Above the spacer */
-    background-color: var(--bg-color); /* Covers the background */
-    min-height: 100vh;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem;
+  position: relative;
+  z-index: 10;
+  background-color: var(--bg-color);
+  min-height: 100vh;
 }
 
-/* 3. ABOUT SECTION (Fixes the huge image) */
 .about-grid {
-    display: grid;
-    grid-template-columns: 300px 1fr;
-    gap: 3rem;
-    align-items: start;
-    margin-top: 2rem;
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 3rem;
+  align-items: start;
+  margin-top: 2rem;
 }
 
-/* THIS FIXES THE HUGE IMAGE */
 .image-wrapper {
-    width: 100%;
-    max-width: 300px;
-}
-.profile-pic {
-    width: 100%;
-    height: auto;
-    border-radius: 12px;
-    border: 2px solid var(--accent);
-    box-shadow: 10px 10px 0 #222;
-    object-fit: cover;
-}
-.location {
-    margin-top: 1rem;
-    color: var(--text-secondary);
-    text-align: center;
-    font-size: 0.9rem;
+  width: 100%;
+  max-width: 300px;
 }
 
-/* 4. CREDENTIALS & PROJECTS GRID */
+.profile-pic {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  border: 2px solid var(--accent);
+  box-shadow: 10px 10px 0 #222;
+  object-fit: cover;
+}
+
+.location {
+  margin-top: 1rem;
+  color: var(--text-secondary);
+  text-align: center;
+  font-size: 0.9rem;
+}
+
 .grid-2-col { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
 .project-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
 
 .project-card, .card-column {
-    background: var(--card-bg);
-    padding: 1.5rem;
-    border-radius: 8px;
-    border: 1px solid #222;
-    transition: border-color 0.3s;
+  background: var(--card-bg);
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid #222;
+  transition: border-color 0.3s;
 }
 .project-card:hover { border-color: var(--accent); }
 
 .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+
 .tech-stack { margin-top: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap; }
 .tech-stack span {
-    background: #222; color: var(--accent);
-    font-size: 0.75rem; padding: 4px 8px; border-radius: 4px;
+  background: #222;
+  color: var(--accent);
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  border-radius: 4px;
 }
 
-/* Cert Badges */
 .cert-item { margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid #222; }
-.status { font-size: 0.7rem; text-transform: uppercase; font-weight: bold; padding: 2px 6px; border-radius: 3px; margin-right: 8px;}
+.status { font-size: 0.7rem; text-transform: uppercase; font-weight: bold; padding: 2px 6px; border-radius: 3px; margin-right: 8px; }
 .status.completed { background: rgba(0, 204, 102, 0.2); color: var(--status-completed); }
 .status.in-progress { background: rgba(255, 187, 0, 0.2); color: var(--status-progress); }
 
-/* 5. FOOTER */
 footer {
-    text-align: center; padding: 3rem 0; border-top: 1px solid #222;
-    color: var(--text-secondary); font-size: 0.9rem; margin-top: 4rem;
-}
-#back-to-top {
-    background: none; border: 1px solid var(--text-secondary); color: var(--text-secondary);
-    padding: 8px 16px; margin-top: 1rem; cursor: pointer; border-radius: 4px;
+  text-align: center;
+  padding: 3rem 0;
+  border-top: 1px solid #222;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-top: 4rem;
 }
 
-/* MOBILE FIXES */
+#back-to-top {
+  background: none;
+  border: 1px solid var(--text-secondary);
+  color: var(--text-secondary);
+  padding: 8px 16px;
+  margin-top: 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+/* Mobile */
 @media (max-width: 768px) {
-    .about-grid, .grid-2-col { grid-template-columns: 1fr; }
-    .image-wrapper { margin: 0 auto; }
-    .name { font-size: 2.5rem; }
+  .about-grid, .grid-2-col { grid-template-columns: 1fr; }
+  .image-wrapper { margin: 0 auto; }
+  .name { font-size: 2.5rem; }
 }
