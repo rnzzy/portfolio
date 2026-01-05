@@ -1,113 +1,241 @@
-:root{
-  --bg-color:#0a0a0a;
-  --text-primary:#f0f0f0;
-  --text-secondary:#a0a0a0;
-  --accent:#00ffcc;
+:root {
+  --bg-color: #0a0a0a;
+  --card-bg: #161616;
+  --text-primary: #f0f0f0;
+  --text-secondary: #a0a0a0;
+  --accent: #00ffcc;
+  --status-completed: #00cc66;
+  --status-progress: #ffbb00;
 
-  /* animation progress 0..1 (set by JS) */
+  /* Animation progress 0..1 (set by JS) */
   --p: 0;
 
-  /* endpoints */
+  /* Endpoints */
   --header-min: 80px;
 }
 
-/* HEADER driven by --p */
-#hero-header{
+/* --- GLOBAL RESETS --- */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif; /* Ensures the font isn't Times New Roman */
+  overflow-x: hidden;
+}
+
+/* Typography Utils */
+.console-text, .date, .tech-stack, .badge-sudo, .comment, .hash {
+    font-family: 'Fira Code', monospace;
+}
+a { text-decoration: none; color: inherit; }
+section { margin-bottom: 6rem; }
+h2 { font-size: 2rem; margin-bottom: 2rem; color: var(--accent); }
+h3 { margin-bottom: 1rem; }
+
+/* =========================================
+   YOUR HEADER CODE (PRESERVED & INTEGRATED)
+   ========================================= */
+#hero-header {
   position: fixed;
-  top:0; left:0;
-  width:100%;
-  z-index:1000;
+  top: 0; left: 0;
+  width: 100%;
+  z-index: 1000;
   background: rgba(10,10,10, calc(0 + (0.95 * var(--p))));
   backdrop-filter: blur(calc(10px * var(--p)));
   border-bottom: 1px solid rgba(51,51,51, var(--p));
-
-  /* height goes from 100vh to 80px */
+  /* Height goes from 100vh to 80px */
   height: clamp(var(--header-min), calc(100vh - (100vh - var(--header-min)) * var(--p)), 100vh);
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Content container moves from center column to row */
-.header-content{
-  width:100%;
-  max-width:1200px;
+.header-content {
+  width: 100%;
+  max-width: 1200px;
   padding: 0 2rem;
-
-  display:flex;
-  align-items:center;
-
-  /* smoothly shift from column -> row */
-  flex-direction: column;
+  display: flex;
+  align-items: center;
+  flex-direction: column; /* Starts as column */
   gap: 1.5rem;
-  justify-content:center;
+  justify-content: center;
 }
 
-/* We can “blend” layouts by changing alignment with --p */
-#hero-header .header-content{
-  /* when p=1, more like a bar */
-  justify-content: space-between;
-}
-
-/* Disappearing block fades + collapses gradually */
-.disappearing-content{
-  text-align:center;
+/* Disappearing block */
+.disappearing-content {
+  text-align: center;
   opacity: calc(1 - var(--p));
   max-height: calc(100px * (1 - var(--p)));
   overflow: hidden;
-  transition: none; /* driven by variables */
+  transition: none;
 }
+.console-text { color: var(--accent); font-size: 1.2rem; margin-bottom: 0.5rem; }
+.comment { color: var(--text-secondary); font-size: 0.9rem; }
 
-/* Name shrinks gradually */
-.identity-wrapper{
-  text-align: center;
-}
+/* Name Wrapper */
+.identity-wrapper { text-align: center; }
 
-.name{
-  font-weight:800;
-  white-space:nowrap;
+.name {
+  font-weight: 800;
+  white-space: nowrap;
+  /* Shrinks from 3.5rem to 1.5rem */
   font-size: calc(3.5rem - (3.5rem - 1.5rem) * var(--p));
-  transition:none;
+  transition: none;
+  line-height: 1.2;
 }
 
-/* Tagline fades gradually */
-.tagline{
+/* Tagline */
+.tagline {
   color: var(--text-secondary);
   margin-top: 0.5rem;
   opacity: calc(1 - var(--p));
   max-height: calc(50px * (1 - var(--p)));
-  overflow:hidden;
-  transition:none;
+  overflow: hidden;
+  transition: none;
 }
 
-/* Buttons can shrink gradually too */
-.cta-wrapper{
-  display:flex;
-  gap:1rem;
-}
+/* Buttons */
+.cta-wrapper { display: flex; gap: 1rem; }
 
-.btn{
+.btn {
+  /* Dynamic padding calculation */
   padding: calc(12px - 4px * var(--p)) calc(24px - 8px * var(--p));
-  border-radius:6px;
-  font-weight:600;
-  text-decoration:none;
-  color:#fff;
-  border:1px solid #333;
+  border-radius: 6px;
+  font-weight: 600;
+  color: #fff;
+  border: 1px solid #333;
+  /* Dynamic font size */
   font-size: calc(1rem - 0.1rem * var(--p));
-  transition: transform 0.3s;
+  transition: transform 0.3s, background-color 0.3s;
 }
-.btn.primary{ background: var(--accent); color:#000; border-color: var(--accent); }
-.btn:hover{ transform: translateY(-3px); }
+.btn.primary { background: var(--accent); color: #000; border-color: var(--accent); }
+.btn.secondary { color: var(--text-primary); border-color: var(--text-secondary); }
+.btn:hover { transform: translateY(-3px); }
 
-/* Optional: when p is high, force “bar layout” */
-@media (min-width: 700px){
-  #hero-header{
-    justify-content: center;
+/* Landscape / Desktop Logic */
+@media (min-width: 700px) {
+  #hero-header { justify-content: center; }
+  /* Blend layout: closer to row as P increases */
+  #hero-header .header-content {
+     /* We use a calc to simulate the switch or keep flex-direction column until p=1 */
+     /* For simplicity in your specific case, we rely on the header-content width */
+     flex-direction: row; 
+     justify-content: space-between;
   }
-  #hero-header .header-content{
-    /* gradually “feels” like a row when there’s space */
-    flex-direction: row;
+  
+  /* Correction: In full screen mode (p=0), we want centered column. 
+     In scrolled mode (p=1), we want row. 
+     CSS can't animate flex-direction, so we stick to Flex Row but use margins to center items initially */
+     
+  .header-content {
+      flex-direction: row;
+      justify-content: space-between;
+      padding-top: calc((1 - var(--p)) * 20vh); /* Push down when big */
   }
-  .identity-wrapper{ text-align: left; }
+  
+  /* Force items to center visually when p=0 */
+  .identity-wrapper {
+      transform: translateX(calc((1 - var(--p)) * 15vw)); /* Move Center */
+      text-align: left;
+  }
+  .cta-wrapper {
+      transform: translateY(calc((1 - var(--p)) * 50px));
+  }
+}
+
+/* =========================================
+   CONTENT FIXES (ABOUT, PROJECTS, ETC)
+   ========================================= */
+
+/* 1. SPACER 
+   Since the header is fixed, we need a huge empty space at the top 
+   so the user can scroll "through" the animation. */
+.scroll-spacer {
+    height: 100vh;
+    width: 100%;
+    pointer-events: none;
+}
+
+/* 2. CONTAINER */
+.content-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem;
+    position: relative;
+    z-index: 10; /* Above the spacer */
+    background-color: var(--bg-color); /* Covers the background */
+    min-height: 100vh;
+}
+
+/* 3. ABOUT SECTION (Fixes the huge image) */
+.about-grid {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 3rem;
+    align-items: start;
+    margin-top: 2rem;
+}
+
+/* THIS FIXES THE HUGE IMAGE */
+.image-wrapper {
+    width: 100%;
+    max-width: 300px;
+}
+.profile-pic {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    border: 2px solid var(--accent);
+    box-shadow: 10px 10px 0 #222;
+    object-fit: cover;
+}
+.location {
+    margin-top: 1rem;
+    color: var(--text-secondary);
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+/* 4. CREDENTIALS & PROJECTS GRID */
+.grid-2-col { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+.project-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+
+.project-card, .card-column {
+    background: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #222;
+    transition: border-color 0.3s;
+}
+.project-card:hover { border-color: var(--accent); }
+
+.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+.tech-stack { margin-top: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.tech-stack span {
+    background: #222; color: var(--accent);
+    font-size: 0.75rem; padding: 4px 8px; border-radius: 4px;
+}
+
+/* Cert Badges */
+.cert-item { margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid #222; }
+.status { font-size: 0.7rem; text-transform: uppercase; font-weight: bold; padding: 2px 6px; border-radius: 3px; margin-right: 8px;}
+.status.completed { background: rgba(0, 204, 102, 0.2); color: var(--status-completed); }
+.status.in-progress { background: rgba(255, 187, 0, 0.2); color: var(--status-progress); }
+
+/* 5. FOOTER */
+footer {
+    text-align: center; padding: 3rem 0; border-top: 1px solid #222;
+    color: var(--text-secondary); font-size: 0.9rem; margin-top: 4rem;
+}
+#back-to-top {
+    background: none; border: 1px solid var(--text-secondary); color: var(--text-secondary);
+    padding: 8px 16px; margin-top: 1rem; cursor: pointer; border-radius: 4px;
+}
+
+/* MOBILE FIXES */
+@media (max-width: 768px) {
+    .about-grid, .grid-2-col { grid-template-columns: 1fr; }
+    .image-wrapper { margin: 0 auto; }
+    .name { font-size: 2.5rem; }
 }
