@@ -1,10 +1,8 @@
 :root {
     --bg-color: #0a0a0a;
-    --card-bg: #161616;
     --text-primary: #f0f0f0;
     --text-secondary: #a0a0a0;
     --accent: #00ffcc; 
-    --scroll: 0; /* Default value controlled by JS */
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -13,133 +11,117 @@ body {
     background-color: var(--bg-color);
     color: var(--text-primary);
     font-family: 'Inter', sans-serif;
-    overflow-x: hidden; /* Prevents horizontal scrollbar */
+    overflow-x: hidden;
 }
 
-/* --- TYPOGRAPHY --- */
-.console-text, .date, .tech-stack, .badge-sudo, .hash { font-family: 'Fira Code', monospace; }
-a { text-decoration: none; color: inherit; }
-
-/* --- THE SCRUBBING HEADER --- */
+/* --- THE HEADER (Start State: BIG) --- */
 #hero-header {
     position: fixed;
     top: 0; left: 0; width: 100%;
+    height: 100vh; /* Full Screen initially */
     z-index: 1000;
-    border-bottom: 1px solid rgba(51, 51, 51, var(--scroll)); /* Border fades in */
+    background-color: var(--bg-color);
+    border-bottom: 1px solid transparent;
     
-    /* 1. ANIMATE HEIGHT: Shrinks from 100vh to 80px based on scroll */
-    height: calc(100vh - (var(--scroll) * (100vh - 80px)));
+    /* THE MAGIC: This makes the shrink slow and smooth */
+    transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
     
-    /* 2. BACKGROUND: Fades from transparent to dark */
-    background-color: rgba(10, 10, 10, calc(var(--scroll) * 0.95));
-    backdrop-filter: blur(calc(var(--scroll) * 10px));
-
-    /* Layout */
     display: flex;
-    align-items: center; /* Vertically center everything */
-    padding: 0 2rem;
-    overflow: hidden; /* Hides the extra text when header shrinks */
+    align-items: center;
+    justify-content: center;
 }
 
+/* The Container */
 .header-content {
+    display: flex;
+    flex-direction: column; /* Stacked vertically initially */
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
     width: 100%;
     max-width: 1200px;
-    margin: 0 auto;
-    position: relative;
-    height: 100%;
-    display: flex;
-    align-items: center; /* Ensures text stays vertically centered */
+    padding: 0 2rem;
+    transition: all 0.8s ease; /* Moves content smoothly */
 }
 
-/* --- THE NAME (MOVES FROM CENTER TO LEFT) --- */
-.identity {
-    position: absolute;
-    left: 0;
-    /* This calculation moves the name:
-       At scroll 0: It is pushed 50vw (center).
-       At scroll 1: It is at 0px (left). */
-    transform: translateX(calc((1 - var(--scroll)) * (50vw - 150px))); /* 150px is approx half width of name */
-    white-space: nowrap;
+/* 1. DISAPPEARING ITEMS (Hello World, etc) */
+.disappearing-content {
+    text-align: center;
+    opacity: 1;
+    max-height: 100px; /* Allows it to exist */
+    transition: all 0.5s ease;
 }
+.console-text { font-family: 'Fira Code', monospace; color: var(--accent); font-size: 1.2rem; }
+.comment { font-family: 'Fira Code', monospace; color: var(--text-secondary); font-size: 0.9rem; }
+
+/* 2. IDENTITY (Name & Tagline) */
+.identity-wrapper { text-align: center; transition: all 0.8s ease; }
 
 .name {
+    font-size: 3.5rem; /* Big Name */
     font-weight: 800;
-    /* Shrinks font from 3.5rem to 1.5rem */
-    font-size: calc(3.5rem - (var(--scroll) * 2rem));
-    line-height: 1;
+    white-space: nowrap; /* Never breaks into 2 lines */
+    transition: all 0.8s ease;
 }
 
-.badge-sudo {
-    background: #333; color: #00cc66; padding: 4px 8px; border-radius: 4px; font-size: 0.9rem;
-    vertical-align: middle; margin-left: 10px;
-    /* Fade out the badge slightly faster */
-    opacity: calc(1 - (var(--scroll) * 2)); 
+.tagline {
+    color: var(--text-secondary);
+    margin-top: 0.5rem;
+    opacity: 1;
+    max-height: 50px;
+    transition: all 0.5s ease;
 }
 
-/* --- ELEMENTS THAT FADE OUT --- */
-.console-text, .tagline, .status-indicator {
-    position: absolute;
-    width: 100%;
-    text-align: center;
-    left: 0;
-    /* Push them down so they don't overlap the name */
-    top: 60%; 
-    opacity: calc(1 - (var(--scroll) * 3)); /* Fades out very fast */
-    pointer-events: none; /* Can't click them when hidden */
-}
-
-.console-text { top: 30%; color: var(--accent); font-size: 1.5rem; }
-.tagline { top: 55%; color: var(--text-secondary); }
-.status-indicator { top: 65%; font-size: 0.9rem; color: var(--text-secondary); }
-
-/* --- BUTTONS (MOVE FROM BOTTOM TO RIGHT) --- */
-.cta-buttons {
-    position: absolute;
-    transition: none; /* No shaking! */
-    display: flex; gap: 1rem;
-    
-    /* MOVEMENT LOGIC:
-       At scroll 0: Centered at bottom (top 75%, right 50%)
-       At scroll 1: Top Right (top 20px, right 0) */
-       
-    right: calc((1 - var(--scroll)) * 50% + (var(--scroll) * 0px));
-    transform: translateX(calc((1 - var(--scroll)) * 50%)); /* Centers it initially */
-    top: calc((1 - var(--scroll)) * 75% + (var(--scroll) * 20px));
-}
-
+/* 3. BUTTONS */
+.cta-wrapper { display: flex; gap: 1rem; transition: all 0.8s ease; }
 .btn {
-    padding: calc(12px - (var(--scroll) * 4px)); /* Shrinks padding 12px -> 8px */
-    border-radius: 6px; font-weight: 600; white-space: nowrap;
-    border: 1px solid transparent;
+    padding: 12px 24px; border-radius: 6px; font-weight: 600; text-decoration: none; color: #fff;
+    border: 1px solid #333; transition: 0.3s;
 }
-.btn.primary { background: var(--accent); color: #000; }
-.btn.secondary { border-color: var(--text-secondary); color: var(--text-primary); }
+.btn.primary { background: var(--accent); color: #000; border-color: var(--accent); }
+.btn:hover { transform: translateY(-3px); }
 
-/* --- CONTENT SPACER --- */
+
+/* --- THE SCROLLED STATE (End State: SMALL) --- */
+#hero-header.scrolled {
+    height: 80px; /* Shrinks to sticky bar */
+    background-color: rgba(10, 10, 10, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid #333;
+}
+
+#hero-header.scrolled .header-content {
+    flex-direction: row; /* Switch to side-by-side */
+    justify-content: space-between; /* Push Name left, Buttons right */
+    gap: 0;
+}
+
+/* 1. Hide the extra text */
+#hero-header.scrolled .disappearing-content {
+    opacity: 0;
+    max-height: 0;
+    margin: 0;
+    width: 0; overflow: hidden; /* Removes it from layout */
+}
+
+/* 2. Shrink and Move Name */
+#hero-header.scrolled .identity-wrapper {
+    text-align: left;
+}
+#hero-header.scrolled .name {
+    font-size: 1.5rem; /* Small Name */
+    margin: 0;
+}
+#hero-header.scrolled .tagline {
+    opacity: 0; max-height: 0; margin: 0; /* Hide tagline */
+}
+
+/* 3. Adjust Buttons */
+#hero-header.scrolled .cta-wrapper { margin: 0; }
+#hero-header.scrolled .btn { padding: 8px 16px; font-size: 0.9rem; }
+
+/* --- REST OF PAGE --- */
 .scroll-spacer { height: 100vh; } 
-.content-container { max-width: 1000px; margin: 0 auto; padding: 4rem 2rem; position: relative; z-index: 10; background-color: var(--bg-color); }
+.content-container { max-width: 1000px; margin: 0 auto; padding: 4rem 2rem; }
 section { margin-bottom: 6rem; }
-h2 { font-size: 2rem; margin-bottom: 2rem; color: var(--accent); }
-
-/* --- REST OF DESIGN (Same as before) --- */
-.about-grid { display: grid; grid-template-columns: 300px 1fr; gap: 3rem; align-items: center; }
-.profile-pic { width: 100%; border-radius: 12px; border: 2px solid var(--accent); box-shadow: 10px 10px 0 #222; }
-.location { margin-top: 1rem; color: var(--text-secondary); text-align: center; }
-.grid-2-col { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
-.project-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
-.project-card, .card-column { background: var(--card-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid #222; }
-.card-header { display: flex; justify-content: space-between; margin-bottom: 1rem; }
-.tech-stack { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem; }
-.tech-stack span { background: #222; color: var(--accent); font-size: 0.75rem; padding: 4px 8px; border-radius: 4px; }
-.cert-item { margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid #222; }
-.status { font-size: 0.7rem; text-transform: uppercase; font-weight: bold; padding: 2px 6px; border-radius: 3px; margin-right: 8px; }
-.status.completed { background: rgba(0, 204, 102, 0.2); color: #00cc66; }
-.status.in-progress { background: rgba(255, 187, 0, 0.2); color: #ffbb00; }
-footer { text-align: center; padding: 3rem 0; border-top: 1px solid #222; color: var(--text-secondary); }
-#back-to-top { background: none; border: 1px solid var(--text-secondary); color: var(--text-secondary); padding: 8px 16px; margin-top: 1rem; cursor: pointer; }
-
-@media (max-width: 768px) {
-    .about-grid, .grid-2-col { grid-template-columns: 1fr; }
-    .name { font-size: 2rem; } /* Mobile font size */
-    .cta-buttons { display: none; } /* Hide buttons on mobile header to save space */
-}
+.profile-pic { width: 100%; max-width: 300px; border-radius: 10px; border: 2px solid var(--accent); }
