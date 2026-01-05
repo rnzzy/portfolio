@@ -1,14 +1,26 @@
-// SMOOTH SCROLL TRIGGER
-window.addEventListener('scroll', function() {
-    const header = document.getElementById('hero-header');
-    
-    // When user scrolls down 50px, add the .scrolled class
-    // The CSS transition (0.8s) handles the smoothness automatically
-    if (window.scrollY > 50) {
-        header.classList.add('scrolled');
-    } else {
-        header.classList.remove('scrolled');
-    }
-});
+const header = document.getElementById('hero-header');
 
-console.log("Portfolio Interactive Loaded");
+// how many pixels of scroll it takes to fully shrink
+const SHRINK_DISTANCE = 260;
+
+let latestY = 0;
+let ticking = false;
+
+function clamp(n, min, max){ return Math.min(max, Math.max(min, n)); }
+
+function update() {
+  const p = clamp(latestY / SHRINK_DISTANCE, 0, 1);
+  header.style.setProperty('--p', p);
+  ticking = false;
+}
+
+window.addEventListener('scroll', () => {
+  latestY = window.scrollY || document.documentElement.scrollTop;
+
+  if (!ticking) {
+    window.requestAnimationFrame(update);
+    ticking = true;
+  }
+}, { passive: true });
+
+update();
