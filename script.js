@@ -1,43 +1,20 @@
-// 1. SCROLL ANIMATION (Shrink Header)
+// 1. SCROLL SCRUBBING ANIMATION
+// This tracks your scroll and updates a CSS variable (--scroll) from 0 to 1
 window.addEventListener('scroll', function() {
-    const header = document.getElementById('hero-header');
-    const scrollPosition = window.scrollY;
-
-    // Triggers when user scrolls down 100px
-    if (scrollPosition > 100) {
-        header.classList.add('scrolled');
-    } else {
-        header.classList.remove('scrolled');
-    }
+    const scrollY = window.scrollY;
+    const maxScroll = 300; // The animation finishes after scrolling 300px
+    
+    // Calculate progress: 0.0 (top) to 1.0 (finished)
+    let progress = Math.min(scrollY / maxScroll, 1);
+    
+    // Send this number to CSS
+    document.body.style.setProperty('--scroll', progress);
 });
 
 // 2. BACK TO TOP BUTTON
 function scrollToTop() {
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// 3. CLICK RIPPLE EFFECT
-document.addEventListener('click', function(e) {
-    // Create the ripple element
-    const ripple = document.createElement('div');
-    ripple.classList.add('click-effect');
-    
-    // Set position
-    ripple.style.left = e.clientX + 'px';
-    ripple.style.top = e.clientY + 'px';
-    
-    // Append to body
-    document.body.appendChild(ripple);
-    
-    // Remove after animation
-    setTimeout(() => {
-        ripple.remove();
-    }, 600);
-});
-
-// 4. CONSOLE LOG (Easter Egg for Recruiters)
-console.log("%cHello World!", "color: #00ffcc; font-size: 20px; font-weight: bold;");
-console.log("Looking at the source code? I like that. Let's chat: your-email@example.com");
+// 3. CONSOLE LOG
+console.log("%cSystem Online", "color: #00ffcc; font-weight: bold;");

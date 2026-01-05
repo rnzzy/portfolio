@@ -3,232 +3,143 @@
     --card-bg: #161616;
     --text-primary: #f0f0f0;
     --text-secondary: #a0a0a0;
-    --accent: #00ffcc; /* Tech/Neon Green */
-    --accent-dim: rgba(0, 255, 204, 0.1);
-    --status-completed: #00cc66;
-    --status-progress: #ffbb00;
+    --accent: #00ffcc; 
+    --scroll: 0; /* Default value controlled by JS */
 }
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
     background-color: var(--bg-color);
     color: var(--text-primary);
     font-family: 'Inter', sans-serif;
-    overflow-x: hidden;
+    overflow-x: hidden; /* Prevents horizontal scrollbar */
 }
 
-/* --- TYPOGRAPHY UTILS --- */
-.console-text, .date, .tech-stack, .badge-sudo, .comment, .hash {
-    font-family: 'Fira Code', monospace;
-}
-
+/* --- TYPOGRAPHY --- */
+.console-text, .date, .tech-stack, .badge-sudo, .hash { font-family: 'Fira Code', monospace; }
 a { text-decoration: none; color: inherit; }
 
-/* --- TRANSFORMING HERO HEADER --- */
+/* --- THE SCRUBBING HEADER --- */
 #hero-header {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    /* Default height is large */
-    height: 100vh; 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: var(--bg-color);
+    top: 0; left: 0; width: 100%;
     z-index: 1000;
+    border-bottom: 1px solid rgba(51, 51, 51, var(--scroll)); /* Border fades in */
     
-    /* THE KEY TO SMOOTHNESS: Transition all properties slowly */
-    transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
-    border-bottom: 1px solid transparent;
+    /* 1. ANIMATE HEIGHT: Shrinks from 100vh to 80px based on scroll */
+    height: calc(100vh - (var(--scroll) * (100vh - 80px)));
+    
+    /* 2. BACKGROUND: Fades from transparent to dark */
+    background-color: rgba(10, 10, 10, calc(var(--scroll) * 0.95));
+    backdrop-filter: blur(calc(var(--scroll) * 10px));
+
+    /* Layout */
+    display: flex;
+    align-items: center; /* Vertically center everything */
+    padding: 0 2rem;
+    overflow: hidden; /* Hides the extra text when header shrinks */
 }
 
 .header-content {
-    text-align: center;
     width: 100%;
-    max-width: 1000px;
-    padding: 0 20px;
-    /* Smoothly re-arrange content */
-    transition: all 0.8s ease;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    height: 100%;
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    align-items: center; /* Ensures text stays vertically centered */
 }
 
-/* --- ELEMENTS THAT WILL DISAPPEAR --- */
-/* We use max-height and opacity instead of display: none so they animate */
-.console-text, .tagline, .status-indicator, .comment, .badge-sudo {
-    opacity: 1;
-    max-height: 100px; /* Arbitrary limit to allow shrinking */
-    overflow: hidden;
-    transition: all 0.6s ease;
-    transform: translateY(0);
-}
-
-.console-text { font-size: 1.5rem; color: var(--accent); margin-bottom: 1rem; }
-.tagline { font-size: 1.2rem; color: var(--text-secondary); margin-bottom: 2rem; }
-.status-indicator { margin-top: 1rem; }
-
-/* --- NAME TRANSITION --- */
-.name { 
-    font-size: 3.5rem; 
-    font-weight: 800; 
-    letter-spacing: -1px; 
-    margin: 10px 0;
-    transition: font-size 0.8s ease, margin 0.8s ease; 
-}
-
-.badge-sudo { 
-    background: #333; color: var(--status-completed); 
-    padding: 4px 8px; font-size: 0.9rem; border-radius: 4px; vertical-align: middle;
-    margin-left: 10px;
-}
-
-/* --- BUTTONS --- */
-.cta-buttons { 
-    display: flex; gap: 1rem; justify-content: center; margin-top: 2rem;
-    transition: margin 0.8s ease;
-}
-.btn {
-    padding: 12px 24px; border-radius: 6px; font-weight: 600;
-    transition: all 0.3s;
-    border: 1px solid transparent;
+/* --- THE NAME (MOVES FROM CENTER TO LEFT) --- */
+.identity {
+    position: absolute;
+    left: 0;
+    /* This calculation moves the name:
+       At scroll 0: It is pushed 50vw (center).
+       At scroll 1: It is at 0px (left). */
+    transform: translateX(calc((1 - var(--scroll)) * (50vw - 150px))); /* 150px is approx half width of name */
     white-space: nowrap;
 }
-.btn.primary { background: var(--accent); color: #000; }
-.btn.secondary { border-color: var(--text-secondary); color: var(--text-primary); }
-.btn:hover { transform: translateY(-3px); box-shadow: 0 0 15px var(--accent-dim); }
 
-/* --- SCROLLED STATE (THE TRANSFORMATION) --- */
-#hero-header.scrolled {
-    height: 80px; /* Final sticky height */
-    background-color: rgba(10, 10, 10, 0.95);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid #333;
-    padding: 0 2rem; /* Add horizontal padding so text doesn't touch edges */
-}
-
-#hero-header.scrolled .header-content {
-    flex-direction: row; /* Forces side-by-side layout */
-    justify-content: space-between;
-    align-items: center; /* Vertically centers the items */
-    width: 100%;
-    max-width: 1200px; /* Ensures it uses full width */
-}
-
-/* Step 1: Hide the extra elements */
-#hero-header.scrolled .console-text,
-#hero-header.scrolled .tagline,
-#hero-header.scrolled .status-indicator,
-#hero-header.scrolled .comment,
-#hero-header.scrolled .badge-sudo {
-    opacity: 0;
-    max-height: 0;
-    margin: 0;
-    pointer-events: none; /* Prevents hidden items from being clickable */
-    width: 0; /* Ensures they don't take up horizontal space */
-}
-
-/* Step 2: Fix the Name (Prevent Vertical Stacking) */
-#hero-header.scrolled .identity {
-    display: flex;
-    align-items: center;
-}
-
-#hero-header.scrolled .name {
-    font-size: 1.5rem;
-    margin: 0;
-    text-align: left;
-    white-space: nowrap; /* <--- THIS IS THE KEY FIX (Forces one line) */
+.name {
+    font-weight: 800;
+    /* Shrinks font from 3.5rem to 1.5rem */
+    font-size: calc(3.5rem - (var(--scroll) * 2rem));
     line-height: 1;
 }
 
-/* Step 3: Re-align buttons */
-#hero-header.scrolled .cta-buttons {
-    margin: 0;
-    display: flex;
-    gap: 10px;
+.badge-sudo {
+    background: #333; color: #00cc66; padding: 4px 8px; border-radius: 4px; font-size: 0.9rem;
+    vertical-align: middle; margin-left: 10px;
+    /* Fade out the badge slightly faster */
+    opacity: calc(1 - (var(--scroll) * 2)); 
 }
 
-#hero-header.scrolled .btn {
-    padding: 8px 16px; 
-    font-size: 0.85rem;
+/* --- ELEMENTS THAT FADE OUT --- */
+.console-text, .tagline, .status-indicator {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    left: 0;
+    /* Push them down so they don't overlap the name */
+    top: 60%; 
+    opacity: calc(1 - (var(--scroll) * 3)); /* Fades out very fast */
+    pointer-events: none; /* Can't click them when hidden */
 }
 
-/* Pulse Animation */
-.pulse {
-    width: 10px; height: 10px; background-color: var(--status-completed);
-    border-radius: 50%;
-    box-shadow: 0 0 0 rgba(0, 204, 102, 0.4);
-    animation: pulse 2s infinite;
-    display: inline-block;
-    margin-right: 8px;
-}
-@keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(0, 204, 102, 0.4); }
-    70% { box-shadow: 0 0 0 10px rgba(0, 204, 102, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(0, 204, 102, 0); }
+.console-text { top: 30%; color: var(--accent); font-size: 1.5rem; }
+.tagline { top: 55%; color: var(--text-secondary); }
+.status-indicator { top: 65%; font-size: 0.9rem; color: var(--text-secondary); }
+
+/* --- BUTTONS (MOVE FROM BOTTOM TO RIGHT) --- */
+.cta-buttons {
+    position: absolute;
+    transition: none; /* No shaking! */
+    display: flex; gap: 1rem;
+    
+    /* MOVEMENT LOGIC:
+       At scroll 0: Centered at bottom (top 75%, right 50%)
+       At scroll 1: Top Right (top 20px, right 0) */
+       
+    right: calc((1 - var(--scroll)) * 50% + (var(--scroll) * 0px));
+    transform: translateX(calc((1 - var(--scroll)) * 50%)); /* Centers it initially */
+    top: calc((1 - var(--scroll)) * 75% + (var(--scroll) * 20px));
 }
 
-/* --- SPACER & REST OF CONTENT --- */
+.btn {
+    padding: calc(12px - (var(--scroll) * 4px)); /* Shrinks padding 12px -> 8px */
+    border-radius: 6px; font-weight: 600; white-space: nowrap;
+    border: 1px solid transparent;
+}
+.btn.primary { background: var(--accent); color: #000; }
+.btn.secondary { border-color: var(--text-secondary); color: var(--text-primary); }
+
+/* --- CONTENT SPACER --- */
 .scroll-spacer { height: 100vh; } 
-
-.content-container {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 4rem 2rem;
-    position: relative;
-    z-index: 10;
-    background-color: var(--bg-color);
-}
-
+.content-container { max-width: 1000px; margin: 0 auto; padding: 4rem 2rem; position: relative; z-index: 10; background-color: var(--bg-color); }
 section { margin-bottom: 6rem; }
 h2 { font-size: 2rem; margin-bottom: 2rem; color: var(--accent); }
-h3 { margin-bottom: 1rem; }
 
-/* About Section */
+/* --- REST OF DESIGN (Same as before) --- */
 .about-grid { display: grid; grid-template-columns: 300px 1fr; gap: 3rem; align-items: center; }
 .profile-pic { width: 100%; border-radius: 12px; border: 2px solid var(--accent); box-shadow: 10px 10px 0 #222; }
-.location { margin-top: 1rem; color: var(--text-secondary); font-size: 0.9rem; text-align: center;}
-
-/* Projects Grid */
+.location { margin-top: 1rem; color: var(--text-secondary); text-align: center; }
 .grid-2-col { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
 .project-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
-
-.project-card, .card-column {
-    background: var(--card-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid #222;
-    transition: border-color 0.3s;
-}
-.project-card:hover { border-color: var(--accent); }
-.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-.tech-stack { margin-top: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.project-card, .card-column { background: var(--card-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid #222; }
+.card-header { display: flex; justify-content: space-between; margin-bottom: 1rem; }
+.tech-stack { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem; }
 .tech-stack span { background: #222; color: var(--accent); font-size: 0.75rem; padding: 4px 8px; border-radius: 4px; }
-
-/* Cert Badges */
 .cert-item { margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid #222; }
-.status { font-size: 0.7rem; text-transform: uppercase; font-weight: bold; padding: 2px 6px; border-radius: 3px; margin-right: 8px;}
-.status.completed { background: rgba(0, 204, 102, 0.2); color: var(--status-completed); }
-.status.in-progress { background: rgba(255, 187, 0, 0.2); color: var(--status-progress); }
+.status { font-size: 0.7rem; text-transform: uppercase; font-weight: bold; padding: 2px 6px; border-radius: 3px; margin-right: 8px; }
+.status.completed { background: rgba(0, 204, 102, 0.2); color: #00cc66; }
+.status.in-progress { background: rgba(255, 187, 0, 0.2); color: #ffbb00; }
+footer { text-align: center; padding: 3rem 0; border-top: 1px solid #222; color: var(--text-secondary); }
+#back-to-top { background: none; border: 1px solid var(--text-secondary); color: var(--text-secondary); padding: 8px 16px; margin-top: 1rem; cursor: pointer; }
 
-/* Footer */
-footer { text-align: center; padding: 3rem 0; border-top: 1px solid #222; color: var(--text-secondary); font-size: 0.9rem; }
-#back-to-top { background: none; border: 1px solid var(--text-secondary); color: var(--text-secondary); padding: 8px 16px; margin-top: 1rem; cursor: pointer; border-radius: 4px; }
-
-/* Mobile */
 @media (max-width: 768px) {
     .about-grid, .grid-2-col { grid-template-columns: 1fr; }
-    .name { font-size: 2.5rem; }
-    .image-wrapper { margin: 0 auto; max-width: 200px; }
+    .name { font-size: 2rem; } /* Mobile font size */
+    .cta-buttons { display: none; } /* Hide buttons on mobile header to save space */
 }
-
-/* Click Ripple */
-.click-effect {
-    position: absolute; border-radius: 50%; transform: scale(0);
-    animation: ripple 0.6s linear; background-color: rgba(0, 255, 204, 0.4); pointer-events: none;
-}
-@keyframes ripple { to { transform: scale(4); opacity: 0; } }
