@@ -14,29 +14,55 @@
 </head>
 <body>
 
+  <button id="theme-toggle" class="theme-btn" aria-label="Toggle Theme">
+    <i class="fa-solid fa-sun"></i>
+  </button>
+
   <header id="hero-header">
     <div class="header-content">
+      
       <div class="disappearing-content">
-        <p class="console-text">> Hello_World<span class="cursor">_</span></p>
-        <span class="comment">// Welcome to my portfolio</span>
+        <p class="console-text">> HELLO_WORLD<span class="cursor">_</span></p>
+        <span class="comment">// Welcome to my Portfolio</span>
       </div>
 
-      <div class="identity-wrapper">
-        <h1 class="name">Jhorenz Samson Camarador</h1>
-        <p class="tagline">Aspiring Network Engineer</p>
+      <div class="middle-row">
+        <div class="identity-wrapper">
+          <h1 class="name">Jhorenz S. Camarador</h1>
+          <div class="personal-details">
+            <p class="location-text">
+              <i class="fa-solid fa-location-dot"></i> Taguig, Metro Manila, Philippines
+            </p>
+            <p class="role-text">
+              IT Student • Aspiring Network Engineer
+            </p>
+          </div>
+        </div>
+
+        <div class="cta-wrapper">
+          <a href="./assets/resume.pdf" target="_blank" rel="noopener noreferrer" class="btn primary">Resume</a>
+          
+          <a href="https://mail.google.com/mail/?view=cm&fs=1&to=jhorenzcamarador@gmail.com" 
+             target="_blank" class="btn icon-circle" aria-label="Email">
+            <i class="fa-solid fa-envelope"></i>
+          </a>
+          
+          <a href="https://www.linkedin.com/in/jhorenz-camarador-05691b308/" 
+             target="_blank" class="btn icon-circle" aria-label="LinkedIn">
+            <i class="fa-brands fa-linkedin-in"></i>
+          </a>
+        </div>
       </div>
 
-      <div class="cta-wrapper">
-        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=YOUR_EMAIL@gmail.com"
-           target="_blank" class="btn secondary">
-          <i class="fa-solid fa-envelope"></i> Email
-        </a>
-        <a href="#" class="btn primary">Resume <i class="fa-solid fa-file-pdf"></i></a>
+      <div class="scroll-indicator">
+        <i class="fa-solid fa-arrow-down"></i>
       </div>
+
     </div>
   </header>
 
   <main class="content-container">
+    
     <section id="about" class="fade-in">
       <div class="about-grid">
         <div class="image-wrapper">
@@ -44,11 +70,10 @@
                alt="Jhorenz Samson Camarador"
                onerror="this.src='https://via.placeholder.com/400x400/0f0f0f/00ffcc?text=Jhorenz+J'"
                class="profile-pic">
-          <div class="location"><i class="fa-solid fa-location-dot"></i> Taguig, Metro Manila</div>
         </div>
 
         <div class="about-text">
-          <h2><span class="hash">#</span> About_Me</h2>
+          <h2><span class="hash">#</span> About_Me<span class="cursor">_</span></h2>
           <p>
             I am a tech enthusiast focused on network engineering and full-stack development.
             I enjoy solving complex problems, building secure systems, and designing efficient networks.
@@ -59,31 +84,103 @@
     </section>
 
     <section id="credentials" class="fade-in">
-      <h2><span class="hash">#</span> Credentials</h2>
+      
+      <div class="credentials-grid">
+        
+        <div class="cred-column">
+          <h2><span class="hash">#</span> Achievements<span class="cursor">_</span></h2>
+          
+          <div class="cred-list">
+            
+            <div class="cred-card">
+              <div class="cred-icon">
+                <i class="fa-solid fa-graduation-cap"></i>
+              </div>
+              <div class="cred-content">
+                <span class="cred-label">Academic Excellence</span>
+                <h4 class="cred-title">Dean's Lister & Student Athlete</h4>
+                <div class="cred-meta">
+                  <span class="cred-highlight">1st Year - Present</span>
+                  <span class="cred-loc"><i class="fa-solid fa-location-dot"></i> University of Makati</span>
+                </div>
+              </div>
+            </div>
 
-      <div class="grid-2-col">
-        <div class="card-column">
-          <h3><i class="fa-solid fa-trophy"></i> Achievements</h3>
-          <ul class="achievement-list">
-            <li>Dean's Lister - University of Makati (2024)</li>
-            <li>Best Capstone Project Nominee</li>
-            <li>Hackathon Runner-up</li>
-          </ul>
+            <div class="cred-card">
+              <div class="cred-icon">
+                <i class="fa-solid fa-medal"></i>
+              </div>
+              <div class="cred-content">
+                <span class="cred-label">Infotechnolympics</span>
+                <h4 class="cred-title">The Technocentric 2025</h4>
+                <div class="cred-meta">
+                  <span class="cred-highlight">1st Place</span>
+                  <span class="cred-loc"><i class="fa-solid fa-location-dot"></i> University of Makati</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="cred-card">
+              <div class="cred-icon">
+                <i class="fa-solid fa-code"></i>
+              </div>
+              <div class="cred-content">
+                <span class="cred-label">NDC Breaking Enigma</span>
+                <h4 class="cred-title">National Hackathon 2025</h4>
+                <div class="cred-meta">
+                  <span class="cred-highlight">Part of the Top 10 on Sustainability Track</span>
+                  <span class="cred-loc"><i class="fa-solid fa-location-dot"></i> Marikina, Philippines</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="cred-card">
+              <div class="cred-icon">
+                <i class="fa-solid fa-trophy"></i>
+              </div>
+              <div class="cred-content">
+                <span class="cred-label">Build and Ship Philippines</span>
+                <h4 class="cred-title">Ship or be Shipped Hackathon 2025</h4>
+                <div class="cred-meta">
+                  <span class="cred-highlight">Champion</span>
+                  <span class="cred-loc"><i class="fa-solid fa-location-dot"></i> Makati, Philippines</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
         </div>
 
-        <div class="card-column">
-          <h3><i class="fa-solid fa-certificate"></i> Certifications</h3>
+        <div class="cred-column">
+          <h2><span class="hash">#</span> Certifications<span class="cursor">_</span></h2>
 
-          <div class="cert-item">
-            <span class="status completed">Completed</span>
-            <h4>Cisco Certified Network Associate (CCNA)</h4>
-          </div>
+          <div class="cred-list">
+            
+            <div class="cred-card">
+              <div class="cred-icon cert-icon">
+                <i class="fa-brands fa-cisco"></i>
+              </div>
+              <div class="cred-content">
+                <span class="status completed">Completed</span>
+                <h4 class="cred-title">Cisco Certified Network Associate (CCNA)</h4>
+                <span class="cred-date">Issued 2024</span>
+              </div>
+            </div>
 
-          <div class="cert-item">
-            <span class="status in-progress">In Progress</span>
-            <h4>CompTIA Security+</h4>
+            <div class="cred-card">
+              <div class="cred-icon cert-icon">
+                <i class="fa-solid fa-shield-halved"></i>
+              </div>
+              <div class="cred-content">
+                <span class="status in-progress">In Progress</span>
+                <h4 class="cred-title">CompTIA Security+</h4>
+                <span class="cred-date">Expected 2026</span>
+              </div>
+            </div>
+
           </div>
         </div>
+
       </div>
     </section>
 
@@ -120,10 +217,35 @@
   </main>
 
   <footer>
-    <p>&copy; 2026 Jhorenz Samson Camarador. Built with <i class="fa-solid fa-code"></i>.</p>
-    <button id="back-to-top" onclick="window.scrollTo({ top: 0, behavior: 'smooth' })">
-      Back to Top <i class="fa-solid fa-arrow-up"></i>
-    </button>
+    <div class="footer-content">
+      
+      <div class="footer-left">
+        <h3>Jhorenz Samson Camarador</h3>
+        <p>&copy; 2026. Built with <i class="fa-solid fa-code"></i></p>
+      </div>
+
+      <div class="footer-right">
+        <a href="https://facebook.com" target="_blank" class="footer-btn" aria-label="Facebook">
+          <i class="fa-brands fa-facebook-f"></i>
+        </a>
+        <a href="https://instagram.com" target="_blank" class="footer-btn" aria-label="Instagram">
+          <i class="fa-brands fa-instagram"></i>
+        </a>
+        <a href="https://linkedin.com" target="_blank" class="footer-btn" aria-label="LinkedIn">
+          <i class="fa-brands fa-linkedin-in"></i>
+        </a>
+        
+        <button id="copy-email-btn" class="footer-btn" onclick="copyEmail()" aria-label="Copy Email">
+          <i class="fa-solid fa-envelope"></i>
+          <span class="tooltip">Copy Email</span>
+        </button>
+
+        <button id="back-to-top" class="footer-btn arrow-btn" onclick="window.scrollTo({ top: 0, behavior: 'smooth' })">
+          <i class="fa-solid fa-arrow-up"></i>
+        </button>
+      </div>
+
+    </div>
   </footer>
 
   <script src="script.js"></script>
